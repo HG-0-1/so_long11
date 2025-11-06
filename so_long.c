@@ -50,11 +50,11 @@ int key_hook(int keycode, void *param)
 
 int main(void)
 {
-void *mlx_ptr;
-void *win_ptr;
 char **map;
 int height;
 int width;
+t_game game;
+
 
 map =read_map();
 if(!map)
@@ -77,13 +77,22 @@ if (!rec_map(map,height) || !check_wall_tandb(map,width,height)
     //ft_printf("%s","Error: invalid map\n");
     return 1;
 }
-mlx_ptr = mlx_init();
-//*mlx_ptr = mlx_ptr;
-win_ptr = mlx_new_window(mlx_ptr, 900, 900 , "so_long");
-mlx_key_hook(win_ptr,key_hook, NULL);
-mlx_loop(mlx_ptr);
-mlx_destroy_window(mlx_ptr,win_ptr);
+game.map = map;
+game.width =width;
+game.height =height;
 
+
+game.mlx = mlx_init();
+game.win = mlx_new_window(game.mlx, width * 64, height * 64, "so_long");
+
+ load_img(&game);          // 🔹 تحميل الصور من ملف img.c
+ img_in_map(&game);        // 🔹 عرض الصور على الخريطة
+
+mlx_key_hook(game.win, key_hook, &game);
+mlx_loop(game.mlx);
+
+
+mlx_destroy_window(game.mlx,game.win);
 free_map(map);
 return 0;
 }
